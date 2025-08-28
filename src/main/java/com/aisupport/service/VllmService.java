@@ -1,5 +1,6 @@
 package com.aisupport.service;
 
+import com.aisupport.config.AIBasicConfig;
 import com.aisupport.config.AIConfig;
 import com.aisupport.config.CustomHttpClient;
 import com.aisupport.config.CustomHttpClientBuilder;
@@ -18,10 +19,10 @@ import java.util.Map;
  */
 public class VllmService implements AIService {
     
-    private final AIConfig config;
+    private final AIBasicConfig config;
     private final OpenAiChatModel chatModel;
     
-    public VllmService(AIConfig config) {
+    public VllmService(AIBasicConfig config) {
         this.config = config;
         this.chatModel = createChatModel();
     }

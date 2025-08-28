@@ -19,11 +19,11 @@ import java.net.http.HttpTimeoutException;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
+import org.apache.logging.log4j.Logger;
 public class CustomHttpClient implements HttpClient {
-    private static final Logger log = LogManager.getLogger(CustomHttpClient.class);
     private final java.net.http.HttpClient delegate;
     private final Duration readTimeout;
+    private static final Logger log = LogManager.getLogger(CustomHttpClient.class);
 
     public CustomHttpClient(CustomHttpClientBuilder builder) {
         java.net.http.HttpClient.Builder httpClientBuilder = (java.net.http.HttpClient.Builder) Utils.getOrDefault(builder.httpClientBuilder(), java.net.http.HttpClient::newBuilder);

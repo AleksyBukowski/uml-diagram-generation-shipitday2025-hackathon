@@ -1,5 +1,6 @@
 package com.aisupport.service;
 
+import com.aisupport.config.AIBasicConfig;
 import com.aisupport.config.AIConfig;
 
 /**
@@ -13,7 +14,7 @@ public class AIServiceFactory {
      * @return An appropriate AI service implementation
      * @throws IllegalArgumentException if the engine type is not supported
      */
-    public static AIService createService(AIConfig config) {
+    public static AIService createService(AIBasicConfig config) {
         if (config.isOllama()) {
             return new OllamaService(config);
         } else if (config.isVllm()) {

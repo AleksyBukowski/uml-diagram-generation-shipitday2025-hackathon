@@ -1,8 +1,7 @@
 package com.aisupport.service;
 
-import com.aisupport.config.AIConfig;
+import com.aisupport.config.AIBasicConfig;
 import dev.langchain4j.model.ollama.OllamaChatModel;
-import dev.langchain4j.model.output.Response;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,12 +17,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class OllamaService implements AIService {
     
-    private final AIConfig config;
+    private final AIBasicConfig config;
     private final OllamaChatModel chatModel;
     private final OkHttpClient httpClient;
     private final ObjectMapper objectMapper;
     
-    public OllamaService(AIConfig config) {
+    public OllamaService(AIBasicConfig config) {
         this.config = config;
         this.httpClient = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
@@ -52,8 +51,7 @@ public class OllamaService implements AIService {
     public String sendMessage(String message) {
         try {
             // First try the standard LangChain4j approach
-            String response = chatModel.chat(message);
-            return response;
+            return chatModel.chat(message);
         } catch (Exception e) {
             String errorMsg = e.getMessage();
             if (errorMsg.contains("403")) {
@@ -75,10 +73,7 @@ public class OllamaService implements AIService {
 
     private String tryCustomOllamaRequest(String message) {
         try {
-            // Create custom request to Ollama API
             String url = config.getApiUrl() + "api/generate";
-            
-            // Build request body
             String requestBody = String.format(
                 "{\"model\":\"%s\",\"prompt\":\"%s\",\"stream\":false}",
                 config.getModelName(),
