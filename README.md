@@ -4,10 +4,11 @@ A Java application that allows you to send messages and get responses from both 
 
 ## Features
 
-- **Ollama Integration**: Connect to Ollama models using the Ollama API
+- **Ollama Integration**: Connect to Ollama models using the Ollama API with enhanced authentication
 - **VLLM Integration**: Connect to VLLM servers using OpenAI-compatible API interface
-- **Configuration Management**: Easy configuration through properties file
+- **Configuration Management**: Easy configuration through properties file with temperature control
 - **LangChain4j**: Built with the latest LangChain4j library for AI model interactions
+- **Enhanced Authentication**: Improved API key handling with custom headers for Ollama
 - **Maven Project**: Standard Maven project structure with proper dependencies
 
 ## Prerequisites
@@ -24,10 +25,10 @@ src/
 │   ├── java/
 │   │   └── com/aisupport/
 │   │       ├── config/
-│   │       │   └── AIConfig.java          # Configuration loader
+│   │       │   └── AIConfig.java          # Configuration loader with temperature support
 │   │       ├── service/
 │   │       │   ├── AIService.java         # Service interface
-│   │       │   ├── OllamaService.java     # Ollama implementation
+│   │       │   ├── OllamaService.java     # Ollama implementation with enhanced auth
 │   │       │   ├── VllmService.java       # VLLM implementation
 │   │       │   └── AIServiceFactory.java  # Service factory
 │   │       └── Main.java                  # Main application
@@ -50,6 +51,7 @@ engine.ai.apiKey=your_api_key_here
 engine.ai.apiUrl=http://your_ollama_server:port/
 engine.ai.modelName=your_model_name
 engine.ai.maxTokenLimit=2048
+engine.ai.temperature=0.7
 ```
 
 ### For VLLM:
@@ -59,7 +61,16 @@ engine.ai.apiKey=your_api_key_here
 engine.ai.apiUrl=http://your_vllm_server:port/v1
 engine.ai.modelName=your_model_name
 engine.ai.maxTokenLimit=2048
+engine.ai.temperature=0.7
 ```
+
+### Configuration Parameters:
+- **engine.ai.type**: Choose between `ollama` or `vllm`
+- **engine.ai.apiKey**: Your API key for authentication
+- **engine.ai.apiUrl**: Base URL of your AI server
+- **engine.ai.modelName**: Name of the model to use
+- **engine.ai.maxTokenLimit**: Maximum tokens for responses (default: 2048)
+- **engine.ai.temperature**: Controls randomness in responses (0.0 = deterministic, 1.0 = very random, default: 0.7)
 
 ## Building the Project
 
@@ -131,6 +142,18 @@ To switch between Ollama and VLLM:
 3. Uncomment the desired engine configuration
 4. Restart the application
 
+## Recent Updates
+
+### Enhanced Ollama Integration
+- **Improved Authentication**: Added custom authorization headers for better API key handling
+- **Temperature Control**: Configurable temperature parameter for response creativity
+- **Method Updates**: Updated to use `chat()` method instead of deprecated `generate()` method
+- **Better Error Handling**: Enhanced error messages and fallback mechanisms
+
+### Configuration Enhancements
+- **Temperature Support**: Added temperature configuration for fine-tuning AI responses
+- **Flexible Settings**: More granular control over AI model behavior
+
 ## Dependencies
 
 - **LangChain4j**: Core AI framework
@@ -161,6 +184,7 @@ If you're getting a 403 Forbidden error, try these steps:
    - Verify the API key is correct
    - Ensure the API key has proper permissions
    - Check if the server requires specific authentication headers
+   - The application now automatically adds Authorization headers for Ollama
 
 3. **Network Issues**:
    - Verify your IP address is whitelisted on the server
@@ -181,6 +205,7 @@ If you're getting a 403 Forbidden error, try these steps:
 - Ensure the properties file is in the correct location
 - Check property names and values
 - Verify the engine type is either 'ollama' or 'vllm'
+- Temperature values should be between 0.0 and 1.0
 
 ## Contributing
 
