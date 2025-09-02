@@ -1,8 +1,0 @@
-com\aisupport\config\AIConfig.class
-com\aisupport\example\ExampleUsage.class
-com\aisupport\service\AIServiceFactory.class
-com\aisupport\service\AIService.class
-com\aisupport\service\OllamaService.class
-com\aisupport\util\ConnectionTester.class
-com\aisupport\Main.class
-com\aisupport\service\VllmService.class

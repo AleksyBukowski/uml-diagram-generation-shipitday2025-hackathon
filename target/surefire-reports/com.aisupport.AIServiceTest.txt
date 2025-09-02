@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.aisupport.AIServiceTest
--------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.610 s -- in com.aisupport.AIServiceTest
