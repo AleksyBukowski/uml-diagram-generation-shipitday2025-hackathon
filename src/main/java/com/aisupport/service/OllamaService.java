@@ -126,4 +126,7 @@ public class OllamaService implements AIService {
     public String getModelName() {
         return config.getModelName();
     }
+    public OllamaChatModel getChatModel() {
+        return chatModel;
+    }
 }
