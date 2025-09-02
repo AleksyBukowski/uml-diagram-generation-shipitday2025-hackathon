@@ -3,6 +3,8 @@ package com.aisupport.example;
 import com.aisupport.config.AIConfig;
 import com.aisupport.service.AIService;
 import com.aisupport.service.AIServiceFactory;
+import com.aisupport.service.OllamaService;
+import com.aisupport.util.AIConnection;
 
 /**
  * Example class demonstrating how to use the AI services programmatically
