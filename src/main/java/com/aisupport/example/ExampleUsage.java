@@ -39,32 +39,4 @@ public class ExampleUsage {
         String codeResponse = aiService.chat(codePrompt);
         System.out.println("Response: " + codeResponse);
     }
-    
-    /**
-     * Example method showing how to use the service in your own code
-     */
-    public static String getAIResponse(String message) {
-        try {
-            AIConfig config = new AIConfig();
-            AIService aiService = AIServiceFactory.createService(config);
-            return aiService.chat(message);
-        } catch (Exception e) {
-            return "Error: " + e.getMessage();
-        }
-    }
-    
-    /**
-     * Example method for batch processing
-     */
-    public static void processBatchMessages(String[] messages) {
-        AIConfig config = new AIConfig();
-        AIService aiService = AIServiceFactory.createService(config);
-        
-        for (int i = 0; i < messages.length; i++) {
-            System.out.println("Processing message " + (i + 1) + ": " + messages[i]);
-            String response = aiService.chat(messages[i]);
-            System.out.println("Response: " + response);
-            System.out.println("---");
-        }
-    }
 }

@@ -5,19 +5,15 @@ A comprehensive Java application that provides seamless integration with both Ol
 ## Features
 
 - **Multi-Engine Support**: Connect to both Ollama and VLLM models with unified interface
-- **Advanced Configuration**: Flexible configuration management with temperature control and custom settings
-- **LangChain4j Integration**: Built with the latest LangChain4j ecosystem including:
+- **Configuration Management**: Easy configuration through properties file with temperature control
+- **LangChain4j Integration**: Built with LangChain4j for AI model interactions:
+  - Ollama integration via `langchain4j-ollama`
+  - OpenAI-compatible API (VLLM support) via `langchain4j-open-ai`
   - Core LangChain4j functionality
-  - Ollama integration
-  - OpenAI-compatible API (VLLM support)
-  - Anthropic integration
-  - Azure OpenAI support
-  - Easy RAG capabilities
-  - Embeddings support
-- **Enhanced Authentication**: Robust API key handling with custom headers and multiple auth methods
+- **Custom HTTP Client**: Custom HTTP client implementation for advanced configurations
 - **Connection Testing**: Built-in utilities to test and diagnose connection issues
 - **Programmatic API**: Clean service interface for easy integration into other projects
-- **Example Usage**: Comprehensive examples for different use cases
+- **Example Usage**: Basic examples for different use cases
 - **Maven Project**: Standard Maven project structure with proper dependency management
 
 ## Quick Start
@@ -201,28 +197,24 @@ import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 
-// Use AIConnection for advanced model interactions
-ChatMessage message = UserMessage.from("Write a poem about Spring Boot in Java");
-ChatRequest chatRequest = ChatRequest.builder()
-    .messages(message)
-    .build();
+// Use AIConnection for pre-configured services
+AIService ollamaService = AIConnection.provideOllamaGemma2Service();
+String response = ollamaService.chat("Write a poem about Spring Boot in Java");
 
-ChatResponse response = AIConnection.provideOllamaGemma2Service()
-    .getChatModel()
-    .doChat(chatRequest);
+// Or use with custom models
+AIService customOllamaService = AIConnection.provideOllamaService("llama2");
+AIService customVllmService = AIConnection.provideVllmService("llama3_8b_it");
 ```
 
-#### Batch Processing
+#### Using Example Usage Class
 ```java
 import com.aisupport.example.ExampleUsage;
 
-String[] messages = {
-    "What is machine learning?",
-    "Explain neural networks",
-    "How does deep learning work?"
-};
+// Simple usage
+String response = ExampleUsage.getAIResponse("What is machine learning?");
 
-ExampleUsage.processBatchMessages(messages);
+// Or run the example directly
+ExampleUsage.main(new String[]{});
 ```
 
 ### Connection Testing
@@ -280,20 +272,20 @@ This project can be used as a dependency in your own Maven projects:
 ## Recent Updates
 
 ### Version 1.0.0 Features
-- **Multi-Engine Support**: Full support for both Ollama and VLLM models
-- **Advanced Configuration**: Comprehensive configuration management with temperature control
+- **Multi-Engine Support**: Support for both Ollama and VLLM models
+- **Configuration Management**: Properties-based configuration with temperature control
 - **Connection Testing**: Built-in utilities for testing and diagnosing connection issues
 - **Programmatic API**: Clean service interface for easy integration
-- **Example Usage**: Comprehensive examples for different use cases
-- **Enhanced Authentication**: Robust API key handling with multiple authentication methods
-- **LangChain4j Integration**: Full integration with LangChain4j ecosystem including RAG and embeddings
+- **Example Usage**: Basic examples for different use cases
+- **Authentication**: API key handling with custom headers
+- **LangChain4j Integration**: Integration with LangChain4j for Ollama and OpenAI-compatible APIs
 
-### Enhanced Features
-- **AIConnection Utility**: Advanced connection management for complex scenarios
-- **Custom HTTP Client**: Configurable HTTP client for advanced use cases
-- **Batch Processing**: Support for processing multiple messages efficiently
-- **Comprehensive Testing**: Built-in connection testing and diagnostics
-- **Flexible Configuration**: Support for multiple configuration sources and formats
+### Key Features
+- **AIConnection Utility**: Pre-configured service providers for common use cases
+- **Custom HTTP Client**: Custom HTTP client implementation for VLLM connections
+- **Service Factory**: Factory pattern for creating appropriate AI services
+- **Connection Testing**: Comprehensive connection testing utilities
+- **Configuration Classes**: Separate configuration classes for different use cases
 
 ## Dependencies
 
@@ -301,10 +293,10 @@ This project can be used as a dependency in your own Maven projects:
 - **langchain4j-core**: Core AI framework functionality
 - **langchain4j-ollama**: Ollama model integration
 - **langchain4j-open-ai**: OpenAI-compatible API (VLLM support)
+
+### Additional LangChain4j Modules (Available but not actively used in core functionality)
 - **langchain4j-anthropic**: Anthropic Claude integration
 - **langchain4j-azure-open-ai**: Azure OpenAI integration
-
-### Advanced Features
 - **langchain4j-easy-rag**: Easy Retrieval-Augmented Generation
 - **langchain4j-embeddings-all-minilm-l6-v2**: Embeddings support
 
