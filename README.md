@@ -1,15 +1,46 @@
 # AI Support - Java Maven Project
 
-A Java application that allows you to send messages and get responses from both Ollama and VLLM models using LangChain4j.
+A comprehensive Java application that provides seamless integration with both Ollama and VLLM models using LangChain4j. This project serves as both a standalone application and a reusable library for AI model interactions.
 
 ## Features
 
-- **Ollama Integration**: Connect to Ollama models using the Ollama API with enhanced authentication
-- **VLLM Integration**: Connect to VLLM servers using OpenAI-compatible API interface
-- **Configuration Management**: Easy configuration through properties file with temperature control
-- **LangChain4j**: Built with the latest LangChain4j library for AI model interactions
-- **Enhanced Authentication**: Improved API key handling with custom headers for Ollama
-- **Maven Project**: Standard Maven project structure with proper dependencies
+- **Multi-Engine Support**: Connect to both Ollama and VLLM models with unified interface
+- **Advanced Configuration**: Flexible configuration management with temperature control and custom settings
+- **LangChain4j Integration**: Built with the latest LangChain4j ecosystem including:
+  - Core LangChain4j functionality
+  - Ollama integration
+  - OpenAI-compatible API (VLLM support)
+  - Anthropic integration
+  - Azure OpenAI support
+  - Easy RAG capabilities
+  - Embeddings support
+- **Enhanced Authentication**: Robust API key handling with custom headers and multiple auth methods
+- **Connection Testing**: Built-in utilities to test and diagnose connection issues
+- **Programmatic API**: Clean service interface for easy integration into other projects
+- **Example Usage**: Comprehensive examples for different use cases
+- **Maven Project**: Standard Maven project structure with proper dependency management
+
+## Quick Start
+
+1. **Clone and build**:
+   ```bash
+   git clone <repository-url>
+   cd shipItDay2025repo
+   mvn clean compile
+   ```
+
+2. **Configure your AI server**:
+   Edit `src/main/resources/ai-config.properties` with your server details
+
+3. **Run the application**:
+   ```bash
+   mvn exec:java -Dexec.mainClass="com.aisupport.Main"
+   ```
+
+4. **Test your connection**:
+   ```bash
+   mvn exec:java -Dexec.mainClass="com.aisupport.util.ConnectionTester"
+   ```
 
 ## Prerequisites
 
@@ -25,13 +56,21 @@ src/
 │   ├── java/
 │   │   └── com/aisupport/
 │   │       ├── config/
-│   │       │   └── AIConfig.java          # Configuration loader with temperature support
+│   │       │   ├── AIBasicConfig.java     # Basic configuration interface
+│   │       │   ├── AIConfig.java          # Configuration loader with temperature support
+│   │       │   ├── CustomHttpClient.java  # Custom HTTP client for advanced configurations
+│   │       │   └── CustomHttpClientBuilder.java # HTTP client builder
+│   │       ├── example/
+│   │       │   └── ExampleUsage.java      # Comprehensive usage examples
 │   │       ├── service/
 │   │       │   ├── AIService.java         # Service interface
 │   │       │   ├── OllamaService.java     # Ollama implementation with enhanced auth
 │   │       │   ├── VllmService.java       # VLLM implementation
 │   │       │   └── AIServiceFactory.java  # Service factory
-│   │       └── Main.java                  # Main application
+│   │       ├── util/
+│   │       │   ├── AIConnection.java      # Advanced connection utility
+│   │       │   └── ConnectionTester.java  # Connection testing and diagnostics
+│   │       └── Main.java                  # Main application entry point
 │   └── resources/
 │       └── ai-config.properties           # Configuration file
 └── test/
@@ -109,6 +148,8 @@ Run the `Main.java` class directly from your IDE.
 
 ## Usage
 
+### Standalone Application
+
 1. **Start the application**: The application will load configuration and connect to the specified AI model
 2. **Interactive chat**: Type your messages and receive AI responses
 3. **Exit**: Type 'quit' or 'exit' to close the application
@@ -117,10 +158,10 @@ Example session:
 ```
 === AI Support Application ===
 Connecting to AI models...
-Engine Type: ollama
-Model: gemma2
-API URL: http://20.185.83.16:8080/
-✓ Successfully connected to ollama model: gemma2
+Engine Type: vllm
+Model: llama3_8b_it
+API URL: http://9.169.65.166:8080/v1
+✓ Successfully connected to vllm model: llama3_8b_it
 
 === Chat Interface ===
 Type your message (or 'quit' to exit):
@@ -133,6 +174,69 @@ You: quit
 Goodbye!
 ```
 
+### Programmatic Usage
+
+The application can also be used as a library in your own projects:
+
+#### Basic Usage
+```java
+import com.aisupport.config.AIConfig;
+import com.aisupport.service.AIService;
+import com.aisupport.service.AIServiceFactory;
+
+// Load configuration and create service
+AIConfig config = new AIConfig();
+AIService aiService = AIServiceFactory.createService(config);
+
+// Send a message
+String response = aiService.chat("What is the capital of France?");
+System.out.println(response);
+```
+
+#### Advanced Usage with AIConnection
+```java
+import com.aisupport.util.AIConnection;
+import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.model.chat.request.ChatRequest;
+import dev.langchain4j.model.chat.response.ChatResponse;
+
+// Use AIConnection for advanced model interactions
+ChatMessage message = UserMessage.from("Write a poem about Spring Boot in Java");
+ChatRequest chatRequest = ChatRequest.builder()
+    .messages(message)
+    .build();
+
+ChatResponse response = AIConnection.provideOllamaGemma2Service()
+    .getChatModel()
+    .doChat(chatRequest);
+```
+
+#### Batch Processing
+```java
+import com.aisupport.example.ExampleUsage;
+
+String[] messages = {
+    "What is machine learning?",
+    "Explain neural networks",
+    "How does deep learning work?"
+};
+
+ExampleUsage.processBatchMessages(messages);
+```
+
+### Connection Testing
+
+Test your connection before using the application:
+
+```bash
+# Test Ollama connection
+mvn exec:java -Dexec.mainClass="com.aisupport.util.ConnectionTester"
+
+# Test specific configuration
+mvn exec:java -Dexec.mainClass="com.aisupport.example.ExampleUsage"
+```
+
 ## Switching Between Engines
 
 To switch between Ollama and VLLM:
@@ -142,70 +246,150 @@ To switch between Ollama and VLLM:
 3. Uncomment the desired engine configuration
 4. Restart the application
 
+## Using as a Dependency
+
+This project can be used as a dependency in your own Maven projects:
+
+### Installation
+
+1. **Build the project**:
+   ```bash
+   mvn clean install
+   ```
+
+2. **Add to your pom.xml**:
+   ```xml
+   <dependency>
+       <groupId>com.aisupport</groupId>
+       <artifactId>ai-support</artifactId>
+       <version>1.0.0</version>
+   </dependency>
+   ```
+
+3. **Use in your code**:
+   ```java
+   import com.aisupport.config.AIConfig;
+   import com.aisupport.service.AIService;
+   import com.aisupport.service.AIServiceFactory;
+   
+   AIConfig config = new AIConfig();
+   AIService aiService = AIServiceFactory.createService(config);
+   String response = aiService.chat("Your message here");
+   ```
+
 ## Recent Updates
 
-### Enhanced Ollama Integration
-- **Improved Authentication**: Added custom authorization headers for better API key handling
-- **Temperature Control**: Configurable temperature parameter for response creativity
-- **Method Updates**: Updated to use `chat()` method instead of deprecated `generate()` method
-- **Better Error Handling**: Enhanced error messages and fallback mechanisms
+### Version 1.0.0 Features
+- **Multi-Engine Support**: Full support for both Ollama and VLLM models
+- **Advanced Configuration**: Comprehensive configuration management with temperature control
+- **Connection Testing**: Built-in utilities for testing and diagnosing connection issues
+- **Programmatic API**: Clean service interface for easy integration
+- **Example Usage**: Comprehensive examples for different use cases
+- **Enhanced Authentication**: Robust API key handling with multiple authentication methods
+- **LangChain4j Integration**: Full integration with LangChain4j ecosystem including RAG and embeddings
 
-### Configuration Enhancements
-- **Temperature Support**: Added temperature configuration for fine-tuning AI responses
-- **Flexible Settings**: More granular control over AI model behavior
+### Enhanced Features
+- **AIConnection Utility**: Advanced connection management for complex scenarios
+- **Custom HTTP Client**: Configurable HTTP client for advanced use cases
+- **Batch Processing**: Support for processing multiple messages efficiently
+- **Comprehensive Testing**: Built-in connection testing and diagnostics
+- **Flexible Configuration**: Support for multiple configuration sources and formats
 
 ## Dependencies
 
-- **LangChain4j**: Core AI framework
-- **LangChain4j Ollama**: Ollama integration
-- **LangChain4j OpenAI**: VLLM compatibility
-- **OkHttp**: HTTP client
-- **Jackson**: JSON processing
-- **SLF4J**: Logging
-- **JUnit 5**: Testing
+### Core LangChain4j Modules
+- **langchain4j-core**: Core AI framework functionality
+- **langchain4j-ollama**: Ollama model integration
+- **langchain4j-open-ai**: OpenAI-compatible API (VLLM support)
+- **langchain4j-anthropic**: Anthropic Claude integration
+- **langchain4j-azure-open-ai**: Azure OpenAI integration
+
+### Advanced Features
+- **langchain4j-easy-rag**: Easy Retrieval-Augmented Generation
+- **langchain4j-embeddings-all-minilm-l6-v2**: Embeddings support
+
+### Supporting Libraries
+- **OkHttp 4.12.0**: HTTP client for API calls
+- **Jackson 2.15.2**: JSON processing
+- **SLF4J 2.0.9**: Logging framework
+- **JUnit 5.10.0**: Testing framework
+
+### Maven Plugins
+- **maven-compiler-plugin 3.11.0**: Java 17 compilation
+- **maven-surefire-plugin 3.1.2**: Test execution
+- **exec-maven-plugin 3.1.0**: Application execution
 
 ## Troubleshooting
 
-### Connection Issues
-- Verify your server is running and accessible
-- Check the API URL and port
-- Ensure the model name is correct
-- Verify API key if required
+### Connection Testing
 
-### 403 Forbidden Error
-If you're getting a 403 Forbidden error, try these steps:
+Before troubleshooting, use the built-in connection tester:
 
-1. **Test Connection**: Run the connection tester to diagnose issues:
-   ```bash
-   mvn exec:java -Dexec.mainClass="com.aisupport.util.ConnectionTester"
-   ```
+```bash
+# Test current configuration
+mvn exec:java -Dexec.mainClass="com.aisupport.util.ConnectionTester"
 
-2. **Check Authentication**:
-   - Verify the API key is correct
-   - Ensure the API key has proper permissions
-   - Check if the server requires specific authentication headers
-   - The application now automatically adds Authorization headers for Ollama
+# Test with example usage
+mvn exec:java -Dexec.mainClass="com.aisupport.example.ExampleUsage"
+```
 
-3. **Network Issues**:
-   - Verify your IP address is whitelisted on the server
-   - Check firewall settings
-   - Ensure the server allows external connections
+The connection tester will perform:
+- **Basic Connectivity**: Tests if the server is reachable
+- **API Endpoint**: Verifies API endpoints are accessible
+- **Model Availability**: Checks if the specified model is available
+- **Authentication**: Tests API key and authentication headers
 
-4. **Server Configuration**:
-   - Check if the Ollama server requires authentication
-   - Verify the server is configured to accept external requests
-   - Check nginx/load balancer configuration if applicable
+### Common Issues
 
-### Model Issues
-- Make sure the specified model is available on your server
-- Check server logs for model loading errors
-- Verify model compatibility with your server version
+#### Connection Issues
+- **Server Unreachable**: Verify your server is running and accessible
+- **Wrong URL/Port**: Check the API URL and port in configuration
+- **Network Problems**: Check firewall settings and network connectivity
+- **DNS Issues**: Ensure server hostname resolves correctly
 
-### Configuration Issues
-- Ensure the properties file is in the correct location
-- Check property names and values
-- Verify the engine type is either 'ollama' or 'vllm'
-- Temperature values should be between 0.0 and 1.0
+#### Authentication Issues (403 Forbidden)
+1. **API Key Problems**:
+   - Verify the API key is correct and not expired
+   - Check if the API key has proper permissions
+   - Ensure the key format matches server requirements
+
+2. **Header Issues**:
+   - The application automatically adds Authorization headers
+   - Check if server requires specific header formats
+   - Verify X-API-Key vs Authorization header requirements
+
+3. **Server Configuration**:
+   - Check if the server requires authentication
+   - Verify server allows external connections
+   - Check nginx/load balancer configuration
+
+#### Model Issues
+- **Model Not Found (404)**: Ensure the model is installed/loaded on the server
+- **Model Loading Errors**: Check server logs for model loading issues
+- **Compatibility Issues**: Verify model compatibility with server version
+- **Resource Constraints**: Check if server has enough resources to load the model
+
+#### Configuration Issues
+- **Properties File**: Ensure `ai-config.properties` is in the correct location
+- **Property Values**: Check property names and values are correct
+- **Engine Type**: Verify engine type is either 'ollama' or 'vllm'
+- **Temperature Range**: Temperature values should be between 0.0 and 1.0
+- **URL Format**: Ensure URLs end with appropriate paths (/ for Ollama, /v1 for VLLM)
+
+### Debugging Steps
+
+1. **Enable Debug Logging**: Add logging configuration to see detailed connection information
+2. **Test with curl**: Use curl to test API endpoints manually
+3. **Check Server Logs**: Review server-side logs for error details
+4. **Verify Network**: Use ping/telnet to test basic connectivity
+5. **Test Different Models**: Try with different model names to isolate issues
+
+### Performance Issues
+
+- **Slow Responses**: Check server resources and model size
+- **Timeout Errors**: Increase timeout values in configuration
+- **Memory Issues**: Ensure sufficient memory for model loading
+- **Concurrent Requests**: Check if server supports multiple concurrent requests
 
 ## Contributing
 
