@@ -22,7 +22,7 @@ A comprehensive Java application that provides seamless integration with both Ol
    ```bash
    git clone <repository-url>
    cd shipItDay2025repo
-   mvn clean compile
+   mvn clean install
    ```
 
 2. **Configure your AI server**:
