@@ -1,6 +1,9 @@
 package com.aisupport.service;
 
 import com.aisupport.config.AIBasicConfig;
+import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.model.chat.request.ChatRequest;
+import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -9,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -41,34 +45,6 @@ public class OllamaService implements AIService {
                 .modelName(config.getModelName())
                 .temperature(config.getTemperature())
                 .build();
-    }
-
-
-
-
-    
-    @Override
-    public String sendMessage(String message) {
-        try {
-            // First try the standard LangChain4j approach
-            return chatModel.chat(message);
-        } catch (Exception e) {
-            String errorMsg = e.getMessage();
-            if (errorMsg.contains("403")) {
-                // Try custom HTTP request with authentication
-                return tryCustomOllamaRequest(message);
-            } else if (errorMsg.contains("404")) {
-                return "Error: Model not found (404). Please check if the model '" + 
-                       config.getModelName() + "' is available on the server.";
-            } else if (errorMsg.contains("Connection refused") || errorMsg.contains("timeout")) {
-                return "Error: Cannot connect to Ollama server. Please check:\n" +
-                       "1. Server is running at: " + config.getApiUrl() + "\n" +
-                       "2. Network connectivity\n" +
-                       "3. Firewall settings";
-            } else {
-                return "Error communicating with Ollama: " + errorMsg;
-            }
-        }
     }
 
     private String tryCustomOllamaRequest(String message) {
@@ -126,6 +102,27 @@ public class OllamaService implements AIService {
     public String getModelName() {
         return config.getModelName();
     }
+
+    @Override
+    public ChatResponse chat(ChatRequest chatRequest) {
+        return this.chatModel.chat(chatRequest);
+    }
+
+    @Override
+    public ChatResponse chat(ChatMessage... messages) {
+        return this.chatModel.chat(messages);
+    }
+
+    @Override
+    public ChatResponse chat(List<ChatMessage> chatMessages) {
+        return this.chatModel.chat(chatMessages);
+    }
+
+    @Override
+    public String chat(String message) {
+        return this.chatModel.chat(message);
+    }
+
     public OllamaChatModel getChatModel() {
         return chatModel;
     }

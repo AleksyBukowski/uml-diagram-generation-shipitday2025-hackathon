@@ -47,7 +47,7 @@ public class Main {
                 
                 System.out.print("AI: ");
                 long startTime = System.currentTimeMillis();
-                String response = aiService.sendMessage(userInput);
+                String response = aiService.chat(userInput);
                 long endTime = System.currentTimeMillis();
                 
                 System.out.println(response);

@@ -1,22 +1,26 @@
 package com.aisupport.service;
 
 
+import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.model.chat.request.ChatRequest;
+import dev.langchain4j.model.chat.response.ChatResponse;
+
+import java.util.List;
+
 /**
  * Service interface for AI model interactions
  */
 public interface AIService {
-    
-    /**
-     * Send a message to the AI model and get a response
-     * @param message The message to send
-     * @return The AI model's response
-     */
-    String sendMessage(String message);
-    
 
     /**
      * Get the current model name being used
      * @return The model name
      */
     String getModelName();
+
+   ChatResponse chat(ChatRequest chatRequest);
+   ChatResponse chat(ChatMessage... messages);
+   ChatResponse chat(List<ChatMessage> chatMessages);
+   String chat(String message);
+
 }

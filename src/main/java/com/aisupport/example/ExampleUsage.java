@@ -24,19 +24,19 @@ public class ExampleUsage {
         // Example 1: Simple question
         String question = "What is the capital of France?";
         System.out.println("\nQuestion: " + question);
-        String response = aiService.sendMessage(question);
+        String response = aiService.chat(question);
         System.out.println("Response: " + response);
         
         // Example 2: Creative writing
         String creativePrompt = "Write a short poem about artificial intelligence";
         System.out.println("\nPrompt: " + creativePrompt);
-        String creativeResponse = aiService.sendMessage(creativePrompt);
+        String creativeResponse = aiService.chat(creativePrompt);
         System.out.println("Response: " + creativeResponse);
         
         // Example 3: Code generation
         String codePrompt = "Write a Java function to calculate factorial";
         System.out.println("\nPrompt: " + codePrompt);
-        String codeResponse = aiService.sendMessage(codePrompt);
+        String codeResponse = aiService.chat(codePrompt);
         System.out.println("Response: " + codeResponse);
     }
     
@@ -47,7 +47,7 @@ public class ExampleUsage {
         try {
             AIConfig config = new AIConfig();
             AIService aiService = AIServiceFactory.createService(config);
-            return aiService.sendMessage(message);
+            return aiService.chat(message);
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }
@@ -62,7 +62,7 @@ public class ExampleUsage {
         
         for (int i = 0; i < messages.length; i++) {
             System.out.println("Processing message " + (i + 1) + ": " + messages[i]);
-            String response = aiService.sendMessage(messages[i]);
+            String response = aiService.chat(messages[i]);
             System.out.println("Response: " + response);
             System.out.println("---");
         }

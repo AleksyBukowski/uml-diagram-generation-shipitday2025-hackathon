@@ -4,13 +4,17 @@ import com.aisupport.config.AIBasicConfig;
 import com.aisupport.config.AIConfig;
 import com.aisupport.config.CustomHttpClient;
 import com.aisupport.config.CustomHttpClientBuilder;
+import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.request.ChatRequest;
+import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.output.Response;
 
 import java.net.http.HttpClient;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,17 +44,7 @@ public class VllmService implements AIService {
                 .timeout(Duration.of(5, ChronoUnit.MINUTES))
                 .build();
     }
-    
-    @Override
-    public String sendMessage(String message) {
-        try {
-            String response = chatModel.chat(message);
-            return response;
-        } catch (Exception e) {
-            return "Error communicating with VLLM: " + e.getMessage();
-        }
-    }
-    
+
     public ChatModel getChatModel() {
         return chatModel;
     }
@@ -58,5 +52,25 @@ public class VllmService implements AIService {
     @Override
     public String getModelName() {
         return config.getModelName();
+    }
+
+    @Override
+    public ChatResponse chat(ChatRequest chatRequest) {
+        return chatModel.chat(chatRequest);
+    }
+
+    @Override
+    public ChatResponse chat(ChatMessage... messages) {
+        return chatModel.chat(messages);
+    }
+
+    @Override
+    public ChatResponse chat(List<ChatMessage> chatMessages) {
+        return chatModel.chat(chatMessages);
+    }
+
+    @Override
+    public String chat(String message) {
+        return chatModel.chat(message);
     }
 }
