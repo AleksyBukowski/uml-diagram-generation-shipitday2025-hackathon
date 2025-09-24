@@ -4,6 +4,7 @@ import com.aisupport.config.AIBasicConfig;
 import com.aisupport.config.AIConfig;
 import com.aisupport.config.CustomHttpClient;
 import com.aisupport.config.CustomHttpClientBuilder;
+import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.message.SystemMessage;
@@ -19,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Service implementation for VLLM AI models
@@ -59,7 +61,22 @@ public class VllmService implements AIService {
 
     @Override
     public ChatResponse chat(ChatRequest chatRequest) {
-        return chatModel.chat(chatRequest);
+        String messages = chatRequest.messages().stream()
+                .map(message -> {
+                    if (message instanceof UserMessage) {
+                        return ((UserMessage) message).singleText();
+                    } else if (message instanceof AiMessage) {
+                        return ((AiMessage) message).text();
+                    } else if (message instanceof SystemMessage) {
+                        return ((SystemMessage) message).text();
+                    } else {
+                        // For any other message type, convert to string representation
+                        return message.toString();
+                    }
+                })
+                .collect(Collectors.joining(" "));
+        String response = chatModel.chat(messages);
+        return ChatResponse.builder().aiMessage(AiMessage.builder().text(response).build()).build();
     }
 
     @Override
