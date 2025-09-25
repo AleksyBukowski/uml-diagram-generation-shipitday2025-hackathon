@@ -27,20 +27,20 @@ import java.util.stream.Collectors;
  * Uses OpenAI-compatible API interface
  */
 public class VllmService implements AIService {
-    
+
     private final AIBasicConfig config;
     private final OpenAiChatModel chatModel;
-    
+
     public VllmService(AIBasicConfig config) {
         this.config = config;
         this.chatModel = createChatModel();
     }
-    
+
     private OpenAiChatModel createChatModel() {
         HttpClient.Builder client = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1);
         CustomHttpClientBuilder customHttpClientBuilder = CustomHttpClient.builder().httpClientBuilder(client);
-             return OpenAiChatModel.builder()
+        return OpenAiChatModel.builder()
                 .httpClientBuilder(customHttpClientBuilder)
                 .baseUrl(config.getApiUrl())
                 .customHeaders(Map.of("Authorization", "Bearer " + config.getApiKey()))
@@ -53,7 +53,7 @@ public class VllmService implements AIService {
     public ChatModel getChatModel() {
         return chatModel;
     }
-    
+
     @Override
     public String getModelName() {
         return config.getModelName();
@@ -75,8 +75,12 @@ public class VllmService implements AIService {
                     }
                 })
                 .collect(Collectors.joining(" "));
-        String response = chatModel.chat(messages);
-        return ChatResponse.builder().aiMessage(AiMessage.builder().text(response).build()).build();
+        UserMessage userMessage = new UserMessage(messages);
+        ChatRequest castedRequest = ChatRequest.builder()
+                .messages(userMessage)
+                .build();
+        ChatResponse response = chatModel.chat(castedRequest);
+        return response;
     }
 
     @Override
@@ -84,10 +88,10 @@ public class VllmService implements AIService {
         // For VLLM, we need to ensure proper conversation role alternation
         // VLLM expects: user -> assistant -> user -> assistant...
         // System messages are not supported, so we need to handle them differently
-        
+
         List<ChatMessage> processedMessages = new ArrayList<>();
         StringBuilder systemInstructions = new StringBuilder();
-        
+
         for (ChatMessage message : messages) {
             if (message instanceof SystemMessage) {
                 // Collect system instructions to prepend to the first user message
@@ -109,16 +113,16 @@ public class VllmService implements AIService {
                 processedMessages.add(message);
             }
         }
-        
+
         // If we have system instructions but no user message, create one
         if (systemInstructions.length() > 0 && processedMessages.isEmpty()) {
             processedMessages.add(UserMessage.from(systemInstructions.toString()));
         }
-        
+
         ChatRequest chatRequest = ChatRequest.builder()
                 .messages(processedMessages)
                 .build();
-        
+
         return chatModel.chat(chatRequest);
     }
 
@@ -127,10 +131,10 @@ public class VllmService implements AIService {
         // For VLLM, we need to ensure proper conversation role alternation
         // VLLM expects: user -> assistant -> user -> assistant...
         // System messages are not supported, so we need to handle them differently
-        
+
         List<ChatMessage> processedMessages = new ArrayList<>();
         StringBuilder systemInstructions = new StringBuilder();
-        
+
         for (ChatMessage message : chatMessages) {
             if (message instanceof SystemMessage) {
                 // Collect system instructions to prepend to the first user message
@@ -152,16 +156,16 @@ public class VllmService implements AIService {
                 processedMessages.add(message);
             }
         }
-        
+
         // If we have system instructions but no user message, create one
         if (systemInstructions.length() > 0 && processedMessages.isEmpty()) {
             processedMessages.add(UserMessage.from(systemInstructions.toString()));
         }
-        
+
         ChatRequest chatRequest = ChatRequest.builder()
                 .messages(processedMessages)
                 .build();
-        
+
         return chatModel.chat(chatRequest);
     }
 
@@ -170,12 +174,12 @@ public class VllmService implements AIService {
         // For VLLM, we need to ensure proper conversation role alternation
         // Create a conversation with system message, user message, and assistant response
         UserMessage userMessage = UserMessage.from(message);
-        
+
         // Create a chat request with proper conversation structure
         ChatRequest chatRequest = ChatRequest.builder()
                 .messages(userMessage)
                 .build();
-        
+
         ChatResponse response = chatModel.chat(chatRequest);
         return response.aiMessage().text();
     }
