@@ -10,9 +10,9 @@ public class AIConnection {
     private static final String VLLM_ENGINE_NAME = "vllm";
     private static final String OLLAMA_DEFAULT_MODEL = "gemma2";
     private static final String VLLM_DEFAULT_MODEL = "mistral_7b_it";
-    private static final String OLLAMA_URL = "http://20.185.83.16:8080/";
-    private static final String VLLM_URL = "http://9.169.65.166:8080/v1";
-    private static final String OLLAMA_API_KEY = "aie93JaTv1GW1AP4IIUSqeecV22HgpcQ6WlgWNyfx2HflkY5hTw19JDbT90ViKcZaZ6lpjOo3YIGgpkG7Zb8jEKvdM5Ymnq9jPm79osLppCebwJ7WdWTwWq3Rf15NDxm";
+    private static final String OLLAMA_URL = "...";
+    private static final String VLLM_URL = "...";
+    private static final String OLLAMA_API_KEY = "...";
     private static final String VLLM_API_KEY = "dummy";
 
     public static AIService provideService(AIBasicConfig config) {
