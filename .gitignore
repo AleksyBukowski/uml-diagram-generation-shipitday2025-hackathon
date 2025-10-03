@@ -103,8 +103,6 @@ Temporary Items
 
 # Application specific
 *.properties
-!src/main/resources/*.properties
-!src/test/resources/*.properties
 
 # Logs
 logs/
