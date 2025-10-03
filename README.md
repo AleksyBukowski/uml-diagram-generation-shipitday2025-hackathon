@@ -30,7 +30,7 @@ A comprehensive Java application that provides seamless integration with both Ol
 
 3. **Run the application**:
    ```bash
-   mvn exec:java -Dexec.mainClass="com.aisupport.Main"
+   mvn exec:java -Dexec.mainClass="app.Main"
    ```
 
 4. **Test your connection**:
@@ -120,14 +120,14 @@ mvn test
 mvn package
 
 # Run the application
-mvn exec:java -Dexec.mainClass="com.aisupport.Main"
+mvn exec:java -Dexec.mainClass="app.Main"
 ```
 
 ## Running the Application
 
 ### Option 1: Using Maven
 ```bash
-mvn exec:java -Dexec.mainClass="com.aisupport.Main"
+mvn exec:java -Dexec.mainClass="app.Main"
 ```
 
 ### Option 2: Using JAR file

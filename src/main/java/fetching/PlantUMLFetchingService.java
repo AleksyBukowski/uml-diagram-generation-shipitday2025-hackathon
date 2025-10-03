@@ -5,13 +5,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.zip.Deflater;
 
+import static com.aisupport.AIUMLFetchingService.getUMLResponse;
+
 public class PlantUMLFetchingService{
 
     private static final String PLANTUML_SERVER = "http://www.plantuml.com/plantuml/png/";
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_";
 
     public static void main(String[] args) throws Exception {
-        String uml = "@startuml\nAlice -> Bob: Hello!\n@enduml";
+        String uml = getUMLResponse("C:\\Users\\albukows\\Downloads\\the7javafiles");
+        System.out.println(uml);
 
         byte[] image = getDiagramAsPng(uml);
 
